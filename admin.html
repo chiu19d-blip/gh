@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Studio Console — Kanika Sonawane Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f4f7;--card:#fff;--ink:#17202e;--mute:#667085;--line:#e1e5ec;--brand:#141c2b;--acc:#1f7a7a;--ok:#2f7d4f}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131c;--card:#161d2a;--ink:#e8edf5;--mute:#93a0b4;--line:#253042;--brand:#0a0f17;--acc:#4fc3c3;--ok:#6cc08a}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+aside{background:var(--brand);color:#e8edf5;padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+aside button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:inherit;font:inherit;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:left}
+aside button.on,aside button:hover{background:rgba(255,255,255,.12)}
+aside a{display:block;padding:0 12px;color:#9fb0c6;font-size:13px}
+main{padding:32px;max-width:860px;width:100%}
+h2{font:600 26px Inter,sans-serif;letter-spacing:-.01em;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:13px;font-weight:500;color:var(--mute);margin-bottom:10px}
+input,textarea,select{width:100%;margin-top:4px;padding:9px 10px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:500 14px Inter;cursor:pointer}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.del{background:none;color:#c0392b;border:1px solid var(--line)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.thumb{width:72px;height:72px;border-radius:8px;object-fit:cover;background:var(--line);float:right;margin-left:12px}
+.empty{color:var(--mute);text-align:center;padding:32px;border:1px dashed var(--line);border-radius:12px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.msg b{display:block}.msg small{color:var(--mute)}
+@media(max-width:700px){body{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;gap:4px}.brand,.me{width:100%}aside button{width:auto}main{padding:20px}.row{grid-template-columns:1fr}}
+#app{display:contents}#app[hidden],.lg[hidden]{display:none}
+.lg{grid-column:1/-1;min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,var(--brand),#1d3a4a)}
+.lgc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.lgc h2{margin:14px 0 4px}.hint{color:var(--mute);font-size:13px;margin:14px 0 0;text-align:center}
+.err{color:#c0392b;font-size:13px;min-height:18px;margin:0 0 8px}
+.mk{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--acc);color:#fff;font:700 14px Inter;flex:none}.mk.big{width:46px;height:46px;font-size:17px}
+.brand{display:flex;gap:10px;align-items:center;margin:0 0 24px;padding:0 4px}.brand b{display:block;font-size:15px}.brand small{color:#9fb0c6;font-size:12px}
+.me{margin-top:auto;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}
+.who{display:flex;gap:10px;align-items:center;margin:12px 0}.who b{display:block;font-size:14px}.who small{color:#9fb0c6;font-size:12px}
+.av{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);font:600 12px Inter;flex:none}main .av{background:var(--line);color:var(--ink)}
+.outb{justify-content:center!important;border:1px solid rgba(255,255,255,.25)!important}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:14px}
+.stat{all:unset;box-sizing:border-box;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:block}
+.stat:focus-visible{outline:2px solid var(--acc);outline-offset:2px}.stat b{display:block;font-size:28px;font-weight:700}.stat span{color:var(--mute);font-size:13px}
+.chk{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line)}.chk:first-of-type{margin-top:10px}
+</style>
+</head>
+<body>
+<div id="app" hidden>
+<aside>
+  <div class="brand"><span class="mk">KS</span><div><b>Studio Console</b><small id="roleLbl"></small></div></div>
+  <div id="tabs"></div>
+  <div class="me"><a href="index.html">View website ↗</a>
+    <div class="who"><span class="av" id="av"></span><div><b id="un"></b><small id="ur"></small></div></div>
+    <button class="outb" id="out">Log out</button></div>
+</aside>
+<main id="main"></main>
+</div>
+<div class="toast" id="toast" role="status">Saved</div>
+
+<script>
+const KEY='ks_admin_data';
+const DEF={projects:[],videos:[],
+about:{bio:'',skills:'Poster Design\nLogo Design\nThumbnail Design\nPhoto Editing\nVideo Editing\nVFX — Currently Learning\n3D Modelling — Currently Learning',software:'Photoshop\nIllustrator\nAfter Effects\nPremiere Pro\nBlender',experience:'Internship – Sahash Organisation (NGO) | Graphic Designer Intern\nPersonal Videos | Video editing & shooting'},
+site:{studio:'Kanika Sonawane Studio',heroName:'Kanika Sonawane',role:'Independent Graphic Designer',sticker:'open for freelance',marquee:'graphic design, Poster Design, Logo Design, Photo Editing, Thumbnail Design',workTitle:'selected work',videosTitle:'Videos',contactTitle:'say hi',contactText:'Have a project in mind? Let’s talk.',ctaTitle:'Have a creative project in mind?',ctaText:'Let’s collaborate and turn your ideas into meaningful visual experiences.',footerDesc:'Independent graphic designer creating identities, images and moving pieces for brands and creators.',footerTag:'Creating meaningful visuals with creativity and purpose.',services:'Graphic Design\nPhoto Editing\nLogo Design\nVideo Editing\nMotion Graphics\nThumbnail Design',metaTitle:'Kanika Sonawane — Independent Graphic Designer',metaDesc:'Portfolio of Kanika Sonawane, independent graphic designer.'},
+contact:{email:'hello@kanikasonavne.com',whatsapp:'',instagram:'',behance:'',youtube:'',pinterest:''},
+cats:['Posters','Logos','Thumbnails','Photo Editing'],images:{hero:'',about:'',logo:''},messages:[]};
+let D;
+try{D=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){D=structuredClone(DEF)}
+['site','about','contact','images'].forEach(k=>D[k]=Object.assign({},DEF[k],D[k]));
+const $=s=>document.querySelector(s);
+const driveId=u=>{const m=String(u||'').match(/\/d\/([\w-]{10,})|[?&]id=([\w-]{10,})/);return m?(m[1]||m[2]):''};
+const imgUrl=u=>{const id=driveId(u);return id?`https://drive.google.com/thumbnail?id=${id}&sz=w1600`:u};
+const vidUrl=u=>{const id=driveId(u);if(id)return `https://drive.google.com/file/d/${id}/preview`;const y=String(u||'').match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);return y?`https://www.youtube.com/embed/${y[1]}`:u};
+let U=[],ME=null,fails=0,lockUntil=0,idle;
+try{U=JSON.parse(localStorage.getItem('ks_admin_users')||'[]')}catch(e){}
+const saveU=()=>localStorage.setItem('ks_admin_users',JSON.stringify(U));
+const ROLES={owner:'Owner',tech:'Technical admin',editor:'Editor'};
+const ini=n=>String(n).trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const enc=new TextEncoder(),hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const rnd=()=>hex(crypto.getRandomValues(new Uint8Array(16)));
+async function hash(pw,salt){const k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:150000,hash:'SHA-256'},k,256))}
+function derive(){const c=D.contact,n=String(c.whatsapp||'').replace(/\D/g,'');c.waLink=n?'https://wa.me/'+n:'';const h=String(c.instagram||'').trim();c.instaLink=h?(/^https?:/.test(h)?h:'https://instagram.com/'+h.replace(/^@/,'')):''}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(D));toast('Saved')}catch(e){toast('Storage full — use image paths instead of uploads')}}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1600)}
+const TABS=[['dash','Dashboard'],['images','Site photos'],['cats','Categories'],['projects','Photos & designs'],['videos','Videos'],['about','About me'],['site','Home text'],['contact','Contact & social'],['messages','Messages'],['users','Users'],['account','My account'],['backup','Backup']]
+const vis=()=>TABS.filter(([k])=>ME.role!='editor'||!['users','backup'].includes(k));;
+let tab='dash',fc='';
+const fbar=()=>`<label style="max-width:240px">Show category<select id="fc"><option value="">All</option>${D.cats.map(c=>`<option ${c==fc?'selected':''}>${esc(c)}</option>`).join('')}</select></label>`;
+function nav(){$('#tabs').innerHTML=vis().map(([k,l])=>`<button class="${k==tab?'on':''}" data-t="${k}">${l}${k=='projects'||k=='videos'||k=='messages'?`<span>${D[k].length}</span>`:''}</button>`).join('')}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;render()}};
+function head(t,s){return `<h2>${t}</h2><p class="sub">${s}</p>`}
+
+function readImg(file,cb){const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const m=1200,k=Math.min(1,m/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};i.src=r.result};r.readAsDataURL(file)}
+
+const views={
+projects(){const cats=D.cats;
+ return head('Projects','Paste a Google Drive share link for each image. In Drive: Share → General access → “Anyone with the link”.')+
+ `<button class="btn" data-add="projects">+ Add project</button><div style="height:14px"></div>${fbar()}`+
+ (D.projects.length?D.projects.map((p,i)=>(fc&&p.category!=fc)?'':`<div class="card" data-i="${i}">
+  ${p.image?`<img class="thumb" src="${esc(imgUrl(p.image))}" alt="">`:''}
+  <div class="row"><label>Title<input data-f="title" value="${esc(p.title)}"></label>
+  <label>Category<select data-f="category">${cats.map(c=>`<option ${c==p.category?'selected':''}>${esc(c)}</option>`).join('')}</select></label></div>
+  <label>Google Drive image link<input data-f="image" value="${esc(p.image)}" placeholder="https://drive.google.com/file/d/..."></label>
+  <label>Description<textarea data-f="desc" rows="2">${esc(p.desc)}</textarea></label>
+  <div class="bar"><button class="btn ghost" data-mv="-1">↑</button><button class="btn ghost" data-mv="1">↓</button><button class="btn del" data-del>Delete</button></div></div>`).join(''):'<div class="empty">No projects yet. Add your first one.</div>')},
+videos(){return head('Videos','Paste a Google Drive video link (shared as “Anyone with the link”) or a YouTube link. Order here is the order on the site.')+
+ `<button class="btn" data-add="videos">+ Add video</button><div style="height:14px"></div>${fbar()}`+
+ (D.videos.length?D.videos.map((v,i)=>(fc&&v.category!=fc)?'':`<div class="card" data-i="${i}">${v.thumb?`<img class="thumb" src="${esc(imgUrl(v.thumb))}" alt="">`:''}
+  <div class="row"><label>Title<input data-f="title" value="${esc(v.title)}"></label><label>Video link<input data-f="url" value="${esc(v.url)}" placeholder="Google Drive or YouTube link"></label></div>
+  <label>Category<select data-f="category">${D.cats.map(c=>`<option ${c==v.category?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+  <label>Thumbnail Drive link (optional)<input data-f="thumb" value="${esc(v.thumb)}"></label>
+  <div class="bar"><button class="btn ghost" data-mv="-1">↑</button><button class="btn ghost" data-mv="1">↓</button><button class="btn del" data-del>Delete</button></div></div>`).join(''):'<div class="empty">No videos yet. Add a link to get started.</div>')},
+dash(){const im=D.images,c=D.contact;
+ const todo=[['Header photo',im.hero,'images'],['About me photo',im.about,'images'],['Logo',im.logo,'images'],['WhatsApp number',c.whatsapp,'contact'],['Instagram handle',c.instagram,'contact'],['About intro',D.about.bio,'about'],['At least one photo',D.projects.length,'projects'],['At least one video',D.videos.length,'videos']];
+ const st=(l,v,t)=>`<button class="stat" data-go="${t}"><b>${v}</b><span>${l}</span></button>`;
+ return head('Dashboard','Welcome back, '+esc(ME.name)+'. Manage everything on the website from here.')+
+ `<div class="stats">${st('Photos & designs',D.projects.length,'projects')}${st('Videos',D.videos.length,'videos')}${st('Categories',D.cats.length,'cats')}${ME.role!='editor'?st('Users',U.length,'users'):''}</div>
+ <div class="card"><b>Setup checklist</b>${todo.map(([l,v,t])=>`<div class="chk"><span>${v?'✓':'○'} ${l}</span><button class="btn ghost" data-go="${t}">${v?'Edit':'Add'}</button></div>`).join('')}</div>
+ <div class="card"><b>Publish changes</b><p class="sub" style="margin:6px 0 12px">Download content.json and upload it to the website, replacing the old file.</p><button class="btn" id="pub">Download content.json</button></div>`},
+images(){const m=D.images;const f=(k,l,h)=>`<div class="card" data-obj="images">${m[k]?`<img class="thumb" style="width:96px;height:96px" src="${esc(imgUrl(m[k]))}" alt="">`:''}<label>${l}<input data-f="${k}" value="${esc(m[k])}" placeholder="Google Drive link"></label><span style="color:var(--mute);font-size:13px">${h}</span></div>`;
+ return head('Site photos','Photos that appear on the website itself. Paste a Google Drive link for each (Share → Anyone with the link).')+f('hero','Header (hero) portrait','Large portrait beside your name on the home page. A tall photo (3:4) works best.')+f('about','About me photo','Shown beside your intro in the about section (4:5).')+f('logo','Logo','Your mark in the menu and footer. A square PNG with a transparent background works best.')},
+cats(){return head('Categories','Groups for your photos and videos. They become the filter buttons on the website.')+
+ `<div class="bar" style="margin-bottom:14px"><input id="nc" placeholder="New category, e.g. Posters" style="max-width:280px;margin:0"><button class="btn" data-addcat>+ Add category</button></div>`+
+ (D.cats.length?D.cats.map((c,i)=>`<div class="card" data-ci="${i}"><div class="bar" style="margin:0"><input data-cat value="${esc(c)}" style="flex:1;min-width:140px;margin:0"><span style="color:var(--mute);font-size:13px">${D.projects.filter(p=>p.category==c).length} photos · ${D.videos.filter(v=>v.category==c).length} videos</span><button class="btn ghost" data-cmv="-1">↑</button><button class="btn ghost" data-cmv="1">↓</button><button class="btn del" data-cdel>Delete</button></div></div>`).join(''):'<div class="empty">No categories yet. Add one above.</div>')},
+about(){const a=D.about;return head('About me','Text shown in the about section. One item per line.')+
+ `<div class="card" data-obj="about"><label>Intro<textarea data-f="bio" rows="5">${esc(a.bio)}</textarea></label>
+ <label>Skills<textarea data-f="skills" rows="6">${esc(a.skills)}</textarea></label>
+ <label>Software<textarea data-f="software" rows="4">${esc(a.software)}</textarea></label>
+ <label>Experience (title | role)<textarea data-f="experience" rows="4">${esc(a.experience)}</textarea></label></div>`},
+site(){const s=D.site;
+ const f=(k,l,r)=>r?`<label>${l}<textarea data-f="${k}" rows="${r}">${esc(s[k])}</textarea></label>`:`<label>${l}<input data-f="${k}" value="${esc(s[k])}"></label>`;
+ const g=(t,x)=>`<div class="card" data-obj="site"><b>${t}</b><div style="height:10px"></div>${x}</div>`;
+ return head('Website text','Every heading and line of text on the website.')+
+ g('Brand & header',f('studio','Studio name')+f('heroName','Name in the header')+f('role','Role line')+f('sticker','Sticker text'))+
+ g('Scrolling banner',f('marquee','Words (comma separated)'))+
+ g('Section headings',`<div class="row">${f('workTitle','Work heading')}${f('videosTitle','Videos heading')}</div><div class="row">${f('contactTitle','Contact heading')}${f('contactText','Contact line')}</div>`)+
+ g('Call to action',f('ctaTitle','Heading')+f('ctaText','Text',2))+
+ g('Footer',f('footerDesc','Description',2)+f('footerTag','Tagline')+f('services','Services (one per line)',6))+
+ g('Search & sharing',f('metaTitle','Page title')+f('metaDesc','Search description',2))},
+contact(){const c=D.contact;const f=(k,l,p)=>`<label>${l}<input data-f="${k}" value="${esc(c[k])}" placeholder="${p}"></label>`;
+ return head('Contact & social','Used in the contact section, footer and social icons. Type a number or handle and the link is made for you.')+
+ `<div class="card" data-obj="contact"><div class="row">${f('email','Email','hello@...')}${f('whatsapp','WhatsApp number (with country code)','919834491801')}</div>
+ <div class="row">${f('instagram','Instagram handle','@kanikasonavne')}${f('behance','Behance link','https://behance.net/...')}</div>
+ <div class="row">${f('youtube','YouTube link','https://youtube.com/...')}${f('pinterest','Pinterest link','https://pinterest.com/...')}</div></div>`},
+messages(){return head('Messages','Enquiries from the contact form.')+
+ `<div class="empty">The website form has no server yet, so nothing arrives here.<br>Until one is connected, enquiries come through email, WhatsApp and Instagram.</div>`+
+ D.messages.map(m=>`<div class="card msg"><b>${esc(m.name)} · ${esc(m.subject)}</b><small>${esc(m.email)}</small><p>${esc(m.message)}</p></div>`).join('')},
+account(){return head('My account','Signed in as '+esc(ME.name)+' · '+ROLES[ME.role])+
+ `<form class="card" id="pwf" style="max-width:420px"><b>Change password</b><div style="height:10px"></div><label>Current password<input type="password" name="cur" required autocomplete="current-password"></label><label>New password (8+ characters)<input type="password" name="n1" required autocomplete="new-password"></label><label>Confirm new password<input type="password" name="n2" required autocomplete="new-password"></label><p class="err" id="perr" role="alert"></p><button class="btn">Update password</button></form>
+ <div class="card" style="max-width:420px"><label>Display name<input id="dn" value="${esc(ME.name)}"></label><button class="btn ghost" id="sdn">Save name</button></div>`},
+users(){const can=u=>u.id!=ME.id&&(ME.role=='tech'||u.role!='tech');
+ return head('Users','People who can sign in. Each person sees their own role in the console.')+
+ `<form class="card" id="uf"><b>Add a user</b><div class="row" style="margin-top:10px"><label>Name<input name="name" required></label><label>Username<input name="user" required autocapitalize="none"></label></div>
+ <div class="row"><label>Temporary password (8+ characters)<input name="pw" type="password" required minlength="8" autocomplete="new-password"></label><label>Role<select name="role"><option value="editor">Editor — content only</option><option value="owner">Owner — content, backup, users</option>${ME.role=='tech'?'<option value="tech">Technical admin — everything</option>':''}</select></label></div><p class="err" id="uerr" role="alert"></p><button class="btn">Add user</button></form>`+
+ U.map(u=>`<div class="card" data-u="${u.id}"><div class="bar" style="margin:0"><span class="av">${esc(ini(u.name))}</span><div style="flex:1"><b>${esc(u.name)}</b><div style="color:var(--mute);font-size:13px">@${esc(u.user)} · ${ROLES[u.role]}</div></div>${can(u)?'<button class="btn ghost" data-rp>Reset password</button><button class="btn del" data-ud>Remove</button>':u.id==ME.id?'<span style="color:var(--mute);font-size:13px">You</span>':''}</div></div>`).join('')},
+backup(){return head('Backup','To publish changes on the website: download content.json, then upload it next to index.html (replace the old one). The download is also your backup.')+
+ `<div class="card"><div class="bar"><button class="btn" id="exp">Download content.json</button>
+ <label class="btn ghost" style="margin:0">Restore from file<input type="file" accept=".json" hidden id="imp"></label>
+ <button class="btn del" id="rst">Reset all</button></div></div>`}
+};
+
+function render(){if(!ME)return;if(!vis().some(([k])=>k==tab))tab='dash';nav();$('#main').innerHTML=views[tab]();hooks();
+ if(tab=='backup'){
+  $('#exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));a.download='content.json';a.click()};
+  $('#imp').onchange=e=>{const r=new FileReader();r.onload=()=>{try{D=Object.assign({},DEF,JSON.parse(r.result));save();render()}catch(x){toast('That file is not valid')}};r.readAsText(e.target.files[0])};
+  $('#rst').onclick=()=>{if(confirm('Delete all saved content?')){D=structuredClone(DEF);save();render()}}}}
+
+const main=$('#main');
+main.addEventListener('input',e=>{if(e.target.dataset.cat!==undefined){const i=e.target.closest('[data-ci]').dataset.ci,o=D.cats[i],n=e.target.value;D.projects.concat(D.videos).forEach(x=>{if(x.category==o)x.category=n});D.cats[i]=n;clearTimeout(main.t);main.t=setTimeout(save,500);return}
+ const f=e.target.dataset.f;if(!f)return;
+ const o=e.target.closest('[data-obj]'),c=e.target.closest('[data-i]');
+ if(o){D[o.dataset.obj][f]=e.target.value;if(o.dataset.obj=='images')D.images[f+'Url']=imgUrl(e.target.value);if(o.dataset.obj=='contact')derive()}else if(c){const it=D[tab][c.dataset.i];it[f]=e.target.value;if(f=='image')it.imageUrl=imgUrl(it.image);if(f=='thumb')it.thumbUrl=imgUrl(it.thumb);if(f=='url')it.embed=vidUrl(it.url)}
+ clearTimeout(main.t);main.t=setTimeout(save,500)});
+main.addEventListener('change',e=>{if(e.target.id=='fc'){fc=e.target.value;render()}else if(['image','thumb'].includes(e.target.dataset.f)||e.target.closest('[data-obj="images"]'))setTimeout(render,0)});
+main.addEventListener('click',e=>{const t=e.target,c=t.closest('[data-i]'),cc=t.closest('[data-ci]'),go=t.closest('[data-go]');
+ if(go){tab=go.dataset.go;render();return}
+ if(t.matches('[data-addcat]')){const v=$('#nc').value.trim();if(v&&!D.cats.includes(v)){D.cats.push(v);save();render()}return}
+ if(cc&&t.matches('[data-cdel]')){const n=D.projects.concat(D.videos).filter(x=>x.category==D.cats[cc.dataset.ci]).length;if(confirm(n?n+' items use this category. Delete it anyway?':'Delete this category?')){D.cats.splice(cc.dataset.ci,1);save();render()}return}
+ if(cc&&t.dataset.cmv){const i=+cc.dataset.ci,j=i+ +t.dataset.cmv;if(D.cats[j]){[D.cats[i],D.cats[j]]=[D.cats[j],D.cats[i]];save();render()}return}
+ if(t.dataset.add){D[t.dataset.add].unshift(t.dataset.add=='projects'?{title:'',category:fc||D.cats[0]||'',image:'',imageUrl:'',desc:''}:{title:'',category:fc||D.cats[0]||'',url:'',embed:'',thumb:'',thumbUrl:''});save();render()}
+ else if(t.matches('[data-del]')&&confirm('Delete this item?')){D[tab].splice(c.dataset.i,1);save();render()}
+ else if(t.dataset.mv){const i=+c.dataset.i,j=i+ +t.dataset.mv,L=D[tab];if(L[j]){[L[i],L[j]]=[L[j],L[i]];save();render()}}});
+function hooks(){
+ if(tab=='dash')$('#pub').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));a.download='content.json';a.click()};
+ if(tab=='account'){
+  $('#sdn').onclick=()=>{const v=$('#dn').value.trim();if(!v)return;ME.name=v;saveU();paint();toast('Name saved')};
+  $('#pwf').onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),er=$('#perr');er.textContent='';
+   if(await hash(f.get('cur'),ME.salt)!=ME.hash){er.textContent='Current password is wrong.';return}
+   if(f.get('n1').length<8){er.textContent='Use at least 8 characters.';return}
+   if(f.get('n1')!=f.get('n2')){er.textContent='New passwords do not match.';return}
+   ME.salt=rnd();ME.hash=await hash(f.get('n1'),ME.salt);saveU();e.target.reset();toast('Password updated')}}
+ if(tab=='users'){
+  $('#uf').onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),er=$('#uerr'),user=f.get('user').trim().toLowerCase();
+   if(U.some(x=>x.user==user)){er.textContent='That username is already taken.';return}
+   const salt=rnd();U.push({id:rnd(),name:f.get('name').trim(),user,role:f.get('role'),salt,hash:await hash(f.get('pw'),salt)});saveU();toast('User added');render()};
+  main.querySelectorAll('[data-rp]').forEach(b=>b.onclick=async()=>{const u=U.find(x=>x.id==b.closest('[data-u]').dataset.u),p=prompt('New temporary password for '+u.name+' (8+ characters)');
+   if(!p)return;if(p.length<8){toast('Use 8+ characters');return}u.salt=rnd();u.hash=await hash(p,u.salt);saveU();toast('Password reset')});
+  main.querySelectorAll('[data-ud]').forEach(b=>b.onclick=()=>{const u=U.find(x=>x.id==b.closest('[data-u]').dataset.u);if(confirm('Remove '+u.name+'?')){U=U.filter(x=>x!=u);saveU();render()}})}}
+function paint(){$('#roleLbl').textContent={owner:'Owner console',tech:'Technical console',editor:'Editor console'}[ME.role];$('#un').textContent=ME.name;$('#ur').textContent=ROLES[ME.role];$('#av').textContent=ini(ME.name)}
+function start(user){ME=U.find(x=>x.user==user);sessionStorage.setItem('ks_sess',user);$('#app').hidden=false;paint();tab='dash';render();bump()}
+function logout(){ME=null;clearTimeout(idle);sessionStorage.removeItem('ks_sess');location.replace('login.html')}
+function bump(){clearTimeout(idle);if(ME)idle=setTimeout(logout,30*60e3)}
+['click','keydown'].forEach(v=>document.addEventListener(v,bump));
+$('#out').onclick=logout;
+ME=U.find(u=>u.user==sessionStorage.getItem('ks_sess'))||null;
+ME?start(ME.user):location.replace('login.html');
+</script>
+</body>
+</html>
